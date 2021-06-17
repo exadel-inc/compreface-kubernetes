@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: db-data
+  name: cf-db-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: db
+  name: cf-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: frs
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+          image: postgres:11.5
+          name: cf-db
+          ports:
+          - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: cf-db-data
+      restartPolicy: Always
+      volumes:
+        - name: cf-db-data
+          persistentVolumeClaim:
+            claimName: cf-db-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compreface-postgres-db
+spec:
+  type: ClusterIP
+  selector:
+      app: db
+  ports:
+  - port: 5432
