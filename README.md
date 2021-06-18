@@ -1,22 +1,28 @@
 # CompreFace-kubernetes
 
-# Origin
-Origin project for Docker-compose
-https://github.com/exadel-inc/CompreFace
-
-# Minikube
+### Origin project for Docker-compose
+### https://github.com/exadel-inc/CompreFace
+---
+## Minikube
 Fixed version 0.5.1 and enviroment variables
 
-config and script in the folder minikube/
+### Manual
 
-start-db.sh starts deployment for db
+1. (optional) create namespace and switch context
+> kubectl apply -f minikube/0-ns.yaml
 
-start-cf.sh starts deployments for CompreFace
+> kubectl config set-context --current --namespace=compreface
 
-For expose to network run on host
+2. Deploy db
+> kubectl apply -f minikube/1-db.yaml
+
+3. Deploy CompreFace modules
+> kubectl apply -f minikube/2-core.yaml -f minikube/3-api.yaml -f minikube/4-admin.yaml -f minikube/5-fe.yaml
+
+4. For expose to network run on host
 > minikube service compreface-ui
 
-# TODO
+## TODO
 - deployments on AWS-GCP-Azure
 - enviroment variables
 - helm chart
