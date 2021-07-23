@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api
+  name: {{ .Values.api.name }}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - env:
+            - name: API_JAVA_OPTS
+              value: '-Xmx8g'
+            - name: POSTGRES_PASSWORD
+              value: '{{ .Values.postgres.db_password }}'
+            - name: POSTGRES_URL
+              value: 'jdbc:postgresql://compreface-postgres-db:{{ .Values.postgres.db_port }}/{{ .Values.postgres.db_name }}'
+            - name: POSTGRES_USER
+              value: '{{ .Values.postgres.db_user }}'
+            - name: SAVE_IMAGES_TO_DB
+              value: 'true'
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'dev'
+          image: '{{ .Values.api.repository }}:{{ .Values.api.tag }}'
+          ports:
+          - containerPort: {{ .Values.api.port }}
+          name: {{ .Values.api.name }}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compreface-api
+spec:
+  type: ClusterIP
+  selector:
+      app: api
+  ports:
+  - port: {{ .Values.api.port }}

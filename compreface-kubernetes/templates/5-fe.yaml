@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fe
+  name: {{ .Values.fe.name }}
+spec:
+  replicas: {{ .Values.fe.replicas }}
+  selector:
+    matchLabels:
+      app: fe
+  template:
+    metadata:
+      labels:
+        app: fe
+    spec:
+      containers:
+        - image: '{{ .Values.fe.repository }}:{{ .Values.fe.tag }}'
+          name: {{ .Values.fe.name }}
+          ports:
+            - containerPort: {{ .Values.fe.port }}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fe
+  name: compreface-ui
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8000
+      targetPort: {{ .Values.fe.port }}
+  selector:
+    app: fe

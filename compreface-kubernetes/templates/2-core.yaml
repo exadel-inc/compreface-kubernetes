@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: core
+  name: {{ .Values.core.name }}
+spec:
+  replicas: {{ .Values.core.replicas }}
+  selector:
+    matchLabels:
+      app: core
+  template:
+    metadata:
+      labels:
+        app: core
+    spec:
+      containers:
+        - env:
+            - name: ML_PORT
+              value: "{{ .Values.core.port }}"
+          image: {{ .Values.core.repository }}:{{ .Values.core.tag }}
+          ports:
+          - containerPort: {{ .Values.core.port }}
+          name: {{ .Values.core.name }}
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compreface-core
+spec:
+  type: ClusterIP
+  selector:
+      app: core
+  ports:
+  - port: {{ .Values.core.port }}
