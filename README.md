@@ -72,7 +72,7 @@ eksctl delete cluster --name test
 ```
 # CloudFormation
 CompreFace yaml file can be used for deploying CompreFace solution based on predefined AMIs image with CompreFace application inside
-In current template ImageId: ami-04e612d1108883950 (us-east-1). It contains CompreFace release 0.6.0
+In current template ImageId: ami-0d3846ebc1bd6748e (us-east-1). It contains CompreFace release 0.6.0
 
 To create stack you need to pass the KeyPair parameter of existing SSH key.
 Stack will create separate VPC, subnet, route table, security group, EC2 instance with running CompreFace application on 8000 port.
